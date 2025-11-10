@@ -30,9 +30,9 @@ int nfs_mountpoint_expiry_timeout = 500 * HZ;
 /*
  * nfs_path - reconstruct the path given an arbitrary dentry
  * @base - used to return pointer to the end of devname part of path
- * @dentry - pointer to dentry
+ * @dentry_in - pointer to dentry
  * @buffer - result buffer
- * @buflen - length of buffer
+ * @buflen_in - length of buffer
  * @flags - options (see below)
  *
  * Helper function for constructing the server pathname
@@ -47,15 +47,19 @@ int nfs_mountpoint_expiry_timeout = 500 * HZ;
  *		       the original device (export) name
  *		       (if unset, the original name is returned verbatim)
  */
-char *nfs_path(char **p, struct dentry *dentry, char *buffer, ssize_t buflen,
-	       unsigned flags)
+char *nfs_path(char **p, struct dentry *dentry_in, char *buffer,
+	       ssize_t buflen_in, unsigned flags)
 {
 	char *end;
 	int namelen;
 	unsigned seq;
 	const char *base;
+	struct dentry *dentry;
+	ssize_t buflen;
 
 rename_retry:
+	buflen = buflen_in;
+	dentry = dentry_in;
 	end = buffer+buflen;
 	*--end = '\0';
 	buflen--;
@@ -178,11 +182,12 @@ out_nofree:
 }
 
 static int
-nfs_namespace_getattr(struct vfsmount *mnt, struct dentry *dentry, struct kstat *stat)
+nfs_namespace_getattr(const struct path *path, struct kstat *stat,
+			u32 request_mask, unsigned int query_flags)
 {
-	if (NFS_FH(d_inode(dentry))->size != 0)
-		return nfs_getattr(mnt, dentry, stat);
-	generic_fillattr(d_inode(dentry), stat);
+	if (NFS_FH(d_inode(path->dentry))->size != 0)
+		return nfs_getattr(path, stat, request_mask, query_flags);
+	generic_fillattr(d_inode(path->dentry), stat);
 	return 0;
 }
 

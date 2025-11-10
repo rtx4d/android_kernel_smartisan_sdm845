@@ -137,9 +137,10 @@ static void ovl_remove_opaque(struct dentry *upperdentry)
 	}
 }
 
-static int ovl_dir_getattr(struct vfsmount *mnt, struct dentry *dentry,
-			 struct kstat *stat)
+static int ovl_dir_getattr(const struct path *path, struct kstat *stat,
+			   u32 request_mask, unsigned int flags)
 {
+	struct dentry *dentry = path->dentry;
 	int err;
 	enum ovl_path_type type;
 	struct path realpath;
@@ -147,7 +148,7 @@ static int ovl_dir_getattr(struct vfsmount *mnt, struct dentry *dentry,
 
 	type = ovl_path_real(dentry, &realpath);
 	old_cred = ovl_override_creds(dentry->d_sb);
-	err = vfs_getattr(&realpath, stat);
+	err = vfs_getattr(&realpath, stat, request_mask, flags);
 	ovl_revert_creds(old_cred);
 	if (err)
 		return err;
@@ -257,7 +258,8 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
 		goto out;
 
 	ovl_path_upper(dentry, &upperpath);
-	err = vfs_getattr(&upperpath, &stat);
+	err = vfs_getattr(&upperpath, &stat,
+			  STATX_BASIC_STATS, AT_STATX_SYNC_AS_STAT);
 	if (err)
 		goto out_unlock;
 
@@ -482,7 +484,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
 			      struct dentry *hardlink)
 {
 	int err;
-	const struct cred *old_cred;
+	const struct cred *old_cred, *hold_cred = NULL;
 	struct cred *override_cred;
 
 	err = ovl_copy_up(dentry->d_parent);
@@ -505,7 +507,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
 				goto out_revert_creds;
 			}
 		}
-		put_cred(override_creds(override_cred));
+		hold_cred = override_creds(override_cred);
 		put_cred(override_cred);
 
 		if (!ovl_dentry_is_opaque(dentry))
@@ -516,7 +518,9 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
 							link, hardlink);
 	}
 out_revert_creds:
-	ovl_revert_creds(old_cred);
+	ovl_revert_creds(old_cred ?: hold_cred);
+	if (old_cred && hold_cred)
+		put_cred(hold_cred);
 	if (!err) {
 		struct inode *realinode = d_inode(ovl_dentry_upper(dentry));
 
@@ -927,9 +931,13 @@ static int ovl_rename2(struct inode *olddir, struct dentry *old,
 				goto out_dput;
 		}
 	} else {
-		if (!d_is_negative(newdentry) &&
-		    (!new_opaque || !ovl_is_whiteout(newdentry)))
-			goto out_dput;
+		if (!d_is_negative(newdentry)) {
+			if (!new_opaque || !ovl_is_whiteout(newdentry))
+				goto out_dput;
+		} else {
+			if (flags & RENAME_EXCHANGE)
+				goto out_dput;
+		}
 	}
 
 	if (olddentry == trap)

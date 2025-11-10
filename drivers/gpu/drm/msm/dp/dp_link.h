@@ -112,6 +112,7 @@ struct dp_link {
 #ifdef CONFIG_VENDOR_SMARTISAN
 	bool psm_enabled;
 #endif
+	int power_mode;
 
 	struct dp_link_sink_count sink_count;
 	struct dp_link_test_video test_video;
