@@ -196,6 +196,8 @@ static atomic_t uart_line_id = ATOMIC_INIT(0);
 static struct msm_geni_serial_port msm_geni_console_port;
 static struct msm_geni_serial_port msm_geni_serial_ports[GENI_UART_NR_PORTS];
 
+extern int do_skip_serial;
+
 static void msm_geni_serial_config_port(struct uart_port *uport, int cfg_flags)
 {
 	if (cfg_flags & UART_CONFIG_TYPE)
@@ -446,8 +448,6 @@ static void msm_geni_serial_set_mctrl(struct uart_port *uport,
 							SE_UART_MANUAL_RFR);
 	/* Write to flow control must complete before return to client*/
 	mb();
-	IPC_LOG_MSG(port->ipc_log_misc, "%s: Manual_rfr 0x%x\n",
-						__func__, uart_manual_rfr);
 }
 
 static const char *msm_geni_serial_get_type(struct uart_port *uport)
@@ -754,6 +754,37 @@ static void msm_geni_serial_console_write(struct console *co, const char *s,
 	}
 }
 
+#if defined(SUPPORT_SYSRQ)
+
+#define SRQ_FILTER_MAX			(4)
+#define SRQ_FILTER_STR			"srqX"
+
+static unsigned int  filter_cnt = 0;
+static unsigned char filter[SRQ_FILTER_MAX];
+
+static int check_sysrq_filter(unsigned char ch)
+{
+	if ('\0' == ch) {
+		filter_cnt = 0;
+		return 0;
+	}
+
+	if (filter_cnt < SRQ_FILTER_MAX) {
+		filter[filter_cnt] = ch;
+		filter_cnt++;
+	}
+
+	if (filter_cnt == SRQ_FILTER_MAX) {
+		if (0 == strncmp(filter, SRQ_FILTER_STR, SRQ_FILTER_MAX-1))
+			return 1;
+		else
+			return 2;
+	}
+
+	return 0;
+}
+#endif /* SUPPORT_SYSRQ */
+
 static int handle_rx_console(struct uart_port *uport,
 			unsigned int rx_fifo_wc,
 			unsigned int rx_last_byte_valid,
@@ -779,12 +810,31 @@ static int handle_rx_console(struct uart_port *uport,
 			if (rx_last && rx_last_byte_valid)
 				bytes = rx_last_byte_valid;
 		}
+
 		for (c = 0; c < bytes; c++) {
 			char flag = TTY_NORMAL;
-			int sysrq;
+			int sysrq = 0;
 
 			uport->icount.rx++;
-			sysrq = uart_handle_sysrq_char(uport, rx_char[c]);
+
+#if defined(SUPPORT_SYSRQ)
+			if (uport->sysrq != 0) {
+				int keyrq = check_sysrq_filter(rx_char[c]);
+
+				sysrq = 1;
+				if (time_before(jiffies, uport->sysrq)) {
+					if (1 == keyrq) {
+						spin_unlock(&uport->lock);
+						sysrq = uart_handle_sysrq_char(uport, rx_char[c]);
+						spin_lock(&uport->lock);
+					}
+				} else {
+					uport->sysrq = 0;
+					sysrq = 0;
+				}
+			}
+#endif
+
 			if (!sysrq)
 				tty_insert_flip_char(tport, rx_char[c], flag);
 		}
@@ -896,6 +946,7 @@ static void msm_geni_serial_start_tx(struct uart_port *uport)
 
 		msm_geni_serial_prep_dma_tx(uport);
 	}
+	IPC_LOG_MSG(msm_port->ipc_log_misc, "%s\n", __func__);
 	return;
 check_flow_ctrl:
 	geni_ios = geni_read_reg_nolog(uport->membase, SE_GENI_IOS);
@@ -964,18 +1015,7 @@ static void stop_tx_sequencer(struct uart_port *uport)
 							SE_GENI_M_IRQ_CLEAR);
 	}
 	geni_write_reg_nolog(M_CMD_CANCEL_EN, uport, SE_GENI_M_IRQ_CLEAR);
-	/*
-	 * If we end up having to cancel an on-going Tx for non-console usecase
-	 * then it means there was some unsent data in the Tx FIFO, consequently
-	 * it means that there is a vote imbalance as we put in a vote during
-	 * start_tx() that is removed only as part of a "done" ISR. To balance
-	 * this out, remove the vote put in during start_tx().
-	 */
-	if (!uart_console(uport)) {
-		IPC_LOG_MSG(port->ipc_log_misc, "%s:Removing vote\n", __func__);
-		msm_geni_serial_power_off(uport);
-	}
-	IPC_LOG_MSG(port->ipc_log_misc, "%s:\n", __func__);
+	IPC_LOG_MSG(port->ipc_log_misc, "%s\n", __func__);
 }
 
 static void msm_geni_serial_stop_tx(struct uart_port *uport)
@@ -1011,7 +1051,7 @@ static void start_rx_sequencer(struct uart_port *uport)
 		geni_m_irq_en = geni_read_reg_nolog(uport->membase,
 							SE_GENI_M_IRQ_EN);
 
-		geni_s_irq_en |= S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN;
+		geni_s_irq_en |= S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN | S_GP_IRQ_2_EN;
 		geni_m_irq_en |= M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN;
 
 		geni_write_reg_nolog(geni_s_irq_en, uport->membase,
@@ -1086,7 +1126,7 @@ static void stop_rx_sequencer(struct uart_port *uport)
 							SE_GENI_S_IRQ_EN);
 		geni_m_irq_en = geni_read_reg_nolog(uport->membase,
 							SE_GENI_M_IRQ_EN);
-		geni_s_irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN);
+		geni_s_irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN | S_GP_IRQ_2_EN);
 		geni_m_irq_en &= ~(M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN);
 
 		geni_write_reg_nolog(geni_s_irq_en, uport->membase,
@@ -1427,6 +1467,10 @@ static irqreturn_t msm_geni_serial_isr(int isr, void *dev)
 		} else if ((s_irq_status & S_GP_IRQ_2_EN) ||
 			(s_irq_status & S_GP_IRQ_3_EN)) {
 			uport->icount.brk++;
+#if defined(CONFIG_SERIAL_CORE_CONSOLE) || defined(SUPPORT_SYSRQ)
+			uport->sysrq = 0;
+			uart_handle_break(uport);
+#endif
 			IPC_LOG_MSG(msm_port->ipc_log_misc,
 				"%s.sirq 0x%x break:%d\n",
 				__func__, s_irq_status, uport->icount.brk);
@@ -2322,6 +2366,9 @@ static int msm_geni_serial_probe(struct platform_device *pdev)
 		return -ENODEV;
 	}
 
+	dev_err(&pdev->dev, "%s: do_skip_serial = %d\n", __func__, do_skip_serial);
+	if((!strcmp(id->compatible,"qcom,msm-geni-console")) && do_skip_serial) return -ENODEV;
+
 	if (pdev->dev.of_node) {
 		if (drv->cons)
 			line = of_alias_get_id(pdev->dev.of_node, "serial");
@@ -2533,8 +2580,6 @@ static int msm_geni_serial_runtime_suspend(struct device *dev)
 	 * set this to manual flow on.
 	 */
 	if (!port->manual_flow) {
-		u32 geni_ios;
-
 		uart_manual_rfr |= (UART_MANUAL_RFR_EN | UART_RFR_READY);
 		geni_write_reg_nolog(uart_manual_rfr, port->uport.membase,
 							SE_UART_MANUAL_RFR);
@@ -2543,11 +2588,6 @@ static int msm_geni_serial_runtime_suspend(struct device *dev)
 		 * doing a stop_rx else we could end up flowing off the peer.
 		 */
 		mb();
-		geni_ios = geni_read_reg_nolog(port->uport.membase,
-								SE_GENI_IOS);
-		IPC_LOG_MSG(port->ipc_log_pwr, "%s: Manual Flow ON 0x%x 0x%x\n",
-					 __func__, uart_manual_rfr, geni_ios);
-		udelay(10);
 	}
 	stop_rx_sequencer(&port->uport);
 	if ((geni_status & M_GENI_CMD_ACTIVE))
@@ -2629,7 +2669,6 @@ static int msm_geni_serial_sys_suspend_noirq(struct device *dev)
 			mutex_unlock(&tty_port->mutex);
 			return -EBUSY;
 		}
-		IPC_LOG_MSG(port->ipc_log_pwr, "%s\n", __func__);
 		mutex_unlock(&tty_port->mutex);
 	}
 	return 0;

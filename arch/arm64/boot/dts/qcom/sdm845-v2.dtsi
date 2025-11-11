@@ -1,4 +1,4 @@
-/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -50,8 +50,8 @@
 		mem_client_3_size: qcom,client_3 {
 			compatible = "qcom,memshare-peripheral";
 			qcom,peripheral-size = <0x500000>;
-			qcom,client-id = <1>;
 			qcom,allocate-boot-time;
+			qcom,client-id = <1>;
 			label = "modem";
 		};
 	};
@@ -469,7 +469,6 @@
 			2764800 30000
 			2784000 35000
 			2803200 40000
-			2841600 50000
 		>;
 		idle-cost-data = <
 			100 80 60 40
@@ -536,7 +535,6 @@
 			2764800 160
 			2784000 165
 			2803200 170
-			2841600 180
 		>;
 		idle-cost-data = <
 			4 3 2 1

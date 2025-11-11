@@ -175,6 +175,8 @@ enum ufs_qcom_phy_init_type {
 #define DME_VS_CORE_CLK_CTRL_CORE_CLK_DIV_EN_BIT		BIT(8)
 #define DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN			BIT(9)
 
+#define	ANDROID_BOOT_DEV_MAX	30
+
 static inline void
 ufs_qcom_get_controller_revision(struct ufs_hba *hba,
 				 u8 *major, u16 *minor, u16 *step)
@@ -375,6 +377,7 @@ struct ufs_qcom_host {
 	struct work_struct ice_cfg_work;
 	struct request *req_pending;
 	struct ufs_vreg *vddp_ref_clk;
+	bool work_pending;
 };
 
 static inline u32

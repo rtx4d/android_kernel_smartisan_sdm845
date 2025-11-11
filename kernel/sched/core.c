@@ -2168,6 +2168,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	wallclock = ktime_get_ns();
 	update_task_ravg(rq->curr, rq, TASK_UPDATE, wallclock, 0);
 	update_task_ravg(p, rq, TASK_WAKE, wallclock, 0);
+	cpufreq_update_util(rq, 0);
 	raw_spin_unlock(&rq->lock);
 
 	rcu_read_lock();
@@ -2256,6 +2257,7 @@ static void try_to_wake_up_local(struct task_struct *p, struct pin_cookie cookie
 
 		update_task_ravg(rq->curr, rq, TASK_UPDATE, wallclock, 0);
 		update_task_ravg(p, rq, TASK_WAKE, wallclock, 0);
+		cpufreq_update_util(rq, 0);
 		ttwu_activate(rq, p, ENQUEUE_WAKEUP);
 		note_task_waking(p, wallclock);
 	}
@@ -2323,7 +2325,6 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
 	p->se.nr_migrations		= 0;
 	p->se.vruntime			= 0;
 	p->last_sleep_ts		= 0;
-	p->last_cpu_selected_ts		= 0;
 
 	INIT_LIST_HEAD(&p->se.group_node);
 
@@ -3658,6 +3659,7 @@ static void __sched notrace __schedule(bool preempt)
 
 		update_task_ravg(prev, rq, PUT_PREV_TASK, wallclock, 0);
 		update_task_ravg(next, rq, PICK_NEXT_TASK, wallclock, 0);
+		cpufreq_update_util(rq, 0);
 		rq->nr_switches++;
 		rq->curr = next;
 		++*switch_count;
@@ -3666,6 +3668,7 @@ static void __sched notrace __schedule(bool preempt)
 		rq = context_switch(rq, prev, next, cookie); /* unlocks the rq */
 	} else {
 		update_task_ravg(prev, rq, TASK_UPDATE, wallclock, 0);
+		cpufreq_update_util(rq, 0);
 		lockdep_unpin_lock(&rq->lock, cookie);
 		raw_spin_unlock_irq(&rq->lock);
 	}
