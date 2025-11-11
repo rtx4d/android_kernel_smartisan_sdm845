@@ -68,7 +68,6 @@
 			};
 		};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 		ufs_dev_card_reset_assert: ufs_dev_card_reset_assert {
 			mux {
 				pins = "gpio102";
@@ -124,7 +123,6 @@
 				output-high; /* active low reset */
 			};
 		};
-#endif
 
 		flash_led3_front {
 			flash_led3_front_en: flash_led3_front_en {
@@ -468,7 +466,6 @@
 			};
 		};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 		uart_sel_ctrl {
 			uart_sel_sleep: uart_sel_sleep {
 				mux {
@@ -522,7 +519,6 @@
 				};
 			};
 		};
-#endif
 
 		cdc_reset_ctrl {
 			cdc_reset_sleep: cdc_reset_sleep {
@@ -786,40 +782,24 @@
 		pmx_sde: pmx_sde {
 			sde_dsi_active: sde_dsi_active {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio6", "gpio52", "gpio80";
-#else
-					pins = "gpio6", "gpio52";
-#endif
 					function = "gpio";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio6", "gpio52", "gpio80";
-#else
-					pins = "gpio6", "gpio52";
-#endif
 					drive-strength = <8>;   /* 8 mA */
 					bias-disable = <0>;   /* no pull */
 				};
 			};
 			sde_dsi_suspend: sde_dsi_suspend {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio6", "gpio52", "gpio80";
-#else
-					pins = "gpio6", "gpio52";
-#endif
 					function = "gpio";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio6", "gpio52", "gpio80";
-#else
-					pins = "gpio6", "gpio52";
-#endif
 					drive-strength = <2>;   /* 2 mA */
 					bias-pull-down;         /* PULL DOWN */
 				};
@@ -853,34 +833,6 @@
 				};
 			};
 		};
-
-#ifndef CONFIG_VENDOR_SMARTISAN
-		sde_dp_aux_active: sde_dp_aux_active {
-			mux {
-				pins = "gpio43", "gpio51";
-				function = "gpio";
-			};
-
-			config {
-				pins = "gpio43", "gpio51";
-				bias-disable = <0>; /* no pull */
-				drive-strength = <8>;
-			};
-		};
-
-		sde_dp_aux_suspend: sde_dp_aux_suspend {
-			mux {
-				pins = "gpio43", "gpio51";
-				function = "gpio";
-			};
-
-			config {
-				pins = "gpio43", "gpio51";
-				bias-pull-down;
-				drive-strength = <2>;
-			};
-		};
-#endif
 
 		sde_dp_usbplug_cc_active: sde_dp_usbplug_cc_active {
 			mux {
@@ -2274,11 +2226,7 @@
 				config {
 					pins = "gpio89", "gpio90";
 					drive-strength = <2>;
-#ifdef CONFIG_VENDOR_SMARTISAN
 					bias-disable;
-#else
-					bias-pull-up;
-#endif
 				};
 			};
 		};
@@ -2319,20 +2267,12 @@
 		qupv3_se5_i2c_pins: qupv3_se5_i2c_pins {
 			qupv3_se5_i2c_active: qupv3_se5_i2c_active {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio86";
-#else
-					pins = "gpio85", "gpio86";
-#endif
 					function = "qup5";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio86";
-#else
-					pins = "gpio85", "gpio86";
-#endif
 					drive-strength = <2>;
 					bias-disable;
 				};
@@ -2340,20 +2280,12 @@
 
 			qupv3_se5_i2c_sleep: qupv3_se5_i2c_sleep {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio86";
-#else
-					pins = "gpio85", "gpio86";
-#endif
 					function = "gpio";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio86";
-#else
-					pins = "gpio85", "gpio86";
-#endif
 					drive-strength = <2>;
 					bias-pull-up;
 				};
@@ -2363,49 +2295,26 @@
 		qupv3_se5_spi_pins: qupv3_se5_spi_pins {
 			qupv3_se5_spi_active: qupv3_se5_spi_active {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins =  "gpio87", "gpio88";
 					function = "gpio";
-#else
-					pins = "gpio85", "gpio86", "gpio87",
-								"gpio88";
-					function = "qup5";
-#endif
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio87", "gpio88";
 					drive-strength = <2>;
-#else
-					pins = "gpio85", "gpio86", "gpio87",
-								"gpio88";
-					drive-strength = <6>;
-#endif
 					bias-disable;
 				};
 			};
 
 			qupv3_se5_spi_sleep: qupv3_se5_spi_sleep {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins =  "gpio87", "gpio88";
-#else
-					pins = "gpio85", "gpio86", "gpio87",
-								"gpio88";
-#endif
 					function = "gpio";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio87", "gpio88";
 					drive-strength = <2>;
-#else
-					pins = "gpio85", "gpio86", "gpio87",
-								"gpio88";
-					drive-strength = <6>;
-#endif
 					bias-disable;
 				};
 			};
@@ -3052,11 +2961,7 @@
 				config {
 					pins = "gpio33", "gpio34";
 					drive-strength = <2>;
-#ifdef CONFIG_VENDOR_SMARTISAN
 					bias-disable;
-#else
-					bias-pull-up;
-#endif
 				};
 			};
 		};
@@ -3064,23 +2969,12 @@
 		qupv3_se14_spi_pins: qupv3_se14_spi_pins {
 			qupv3_se14_spi_active: qupv3_se14_spi_active {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio31", "gpio32";
 					function = "gpio";
-#else
-					pins = "gpio31", "gpio32", "gpio33",
-								"gpio34";
-					function = "qup14";
-#endif
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio31", "gpio32";
-#else
-					pins = "gpio31", "gpio32", "gpio33",
-								"gpio34";
-#endif
 					drive-strength = <6>;
 					bias-disable;
 				};
@@ -3088,22 +2982,12 @@
 
 			qupv3_se14_spi_sleep: qupv3_se14_spi_sleep {
 				mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio31", "gpio32";
-#else
-					pins = "gpio31", "gpio32", "gpio33",
-								"gpio34";
-#endif
 					function = "gpio";
 				};
 
 				config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 					pins = "gpio31", "gpio32";
-#else
-					pins = "gpio31", "gpio32", "gpio33",
-								"gpio34";
-#endif
 					drive-strength = <6>;
 					bias-disable;
 				};
@@ -3194,10 +3078,8 @@
 
 			config {
 				pins = "gpio17","gpio18";
-#ifdef CONFIG_VENDOR_SMARTISAN
 				function = "gpio";/*daoyu*/
 				input-enable;
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3226,10 +3108,8 @@
 
 			config {
 				pins = "gpio19","gpio20";
-#ifdef CONFIG_VENDOR_SMARTISAN
 				function = "gpio";/*daoyu*/
 				input-enable;
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3366,18 +3246,12 @@
 			/* MCLK0 */
 			mux {
 				pins = "gpio13";
-#ifdef CONFIG_VENDOR_SMARTISAN
 				function = "gpio";
-#else
-				function = "cam_mclk";
-#endif
 			};
 
 			config {
 				pins = "gpio13";
-#ifdef CONFIG_VENDOR_SMARTISAN
 				input-enable;
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3386,20 +3260,12 @@
 		cam_sensor_rear_active: cam_sensor_rear_active {
 			/* RESET, AVDD LDO */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio21";
-#else
-				pins = "gpio80","gpio79";
-#endif
 				function = "gpio";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio21";
-#else
-				pins = "gpio80","gpio79";
-#endif
 				bias-disable; /* No PULL */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3408,20 +3274,12 @@
 		cam_sensor_rear_suspend: cam_sensor_rear_suspend {
 			/* RESET, AVDD LDO */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio21";
-#else
-				pins = "gpio80","gpio79";
-#endif
 				function = "gpio";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio21";
-#else
-				pins = "gpio80","gpio79";
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 				output-low;
@@ -3431,20 +3289,12 @@
 		cam_sensor_mclk1_active: cam_sensor_mclk1_active {
 			/* MCLK1 */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio15";
-#else
-				pins = "gpio14";
-#endif
 				function = "cam_mclk";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio15";
-#else
-				pins = "gpio14";
-#endif
 				bias-disable; /* No PULL */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3453,76 +3303,27 @@
 		cam_sensor_mclk1_suspend: cam_sensor_mclk1_suspend {
 			/* MCLK1 */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio15";
 				function = "gpio";/*daoyu*/
-#else
-				pins = "gpio14";
-				function = "cam_mclk";
-#endif
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio15";
 				input-enable;
 				bias-disable; /* daoyu PULL DOWN */
-#else
-				pins = "gpio14";
-				bias-pull-down; /* PULL DOWN */
-#endif
 				drive-strength = <2>; /* 2 MA */
 			};
 		};
-
-#ifndef CONFIG_VENDOR_SMARTISAN
-		cam_sensor_mclk3_active: cam_sensor_mclk3_active {
-			/* MCLK3 */
-			mux {
-				pins = "gpio16";
-				function = "cam_mclk";
-			};
-
-			config {
-				pins = "gpio16";
-				bias-disable; /* No PULL */
-				drive-strength = <2>; /* 2 MA */
-			};
-		};
-
-		cam_sensor_mclk3_suspend: cam_sensor_mclk3_suspend {
-			/* MCLK3 */
-			mux {
-				pins = "gpio16";
-				function = "cam_mclk";
-			};
-
-			config {
-				pins = "gpio16";
-				bias-pull-down; /* PULL DOWN */
-				drive-strength = <2>; /* 2 MA */
-			};
-		};
-#endif
-
 
 		cam_sensor_front_active: cam_sensor_front_active {
 			/* RESET  AVDD_LDO*/
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio9", "gpio23";
-#else
-				pins = "gpio28";
-#endif
 				function = "gpio";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio9", "gpio23";
-#else
-				pins = "gpio28";
-#endif
 				bias-disable; /* No PULL */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3531,44 +3332,6 @@
 		cam_sensor_front_suspend: cam_sensor_front_suspend {
 			/* RESET */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
-				pins = "gpio9";
-#else
-				pins = "gpio28";
-#endif
-				function = "gpio";
-			};
-
-			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
-				pins = "gpio9";
-#else
-				pins = "gpio28";
-#endif
-				bias-pull-down; /* PULL DOWN */
-				drive-strength = <2>; /* 2 MA */
-				output-low;
-			};
-		};
-
-#ifndef CONFIG_VENDOR_SMARTISAN
-		cam_sensor_iris_active: cam_sensor_iris_active {
-			/* RESET  AVDD_LDO*/
-			mux {
-				pins = "gpio9";
-				function = "gpio";
-			};
-
-			config {
-				pins = "gpio9";
-				bias-disable; /* No PULL */
-				drive-strength = <2>; /* 2 MA */
-			};
-		};
-
-		cam_sensor_iris_suspend: cam_sensor_iris_suspend {
-			/* RESET */
-			mux {
 				pins = "gpio9";
 				function = "gpio";
 			};
@@ -3580,27 +3343,17 @@
 				output-low;
 			};
 		};
-#endif
-
 
 		cam_sensor_mclk2_active: cam_sensor_mclk2_active {
 			/* MCLK1 */
 			mux {
 				/* CLK, DATA */
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio14";
-#else
-				pins = "gpio15";
-#endif
 				function = "cam_mclk";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio14";
-#else
-				pins = "gpio15";
-#endif
 				bias-disable; /* No PULL */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3610,22 +3363,13 @@
 			/* MCLK1 */
 			mux {
 				/* CLK, DATA */
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio14";
 				function = "gpio";
-#else
-				pins = "gpio15";
-				function = "cam_mclk";
-#endif
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio14";
 				input-enable;
-#else
-				pins = "gpio15";
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3634,20 +3378,12 @@
 		cam_sensor_rear2_active: cam_sensor_rear2_active {
 			/* RESET, STANDBY */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio28","gpio27";
-#else
-				pins = "gpio9";
-#endif
 				function = "gpio";
 			};
 
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio28","gpio27";
-#else
-				pins = "gpio9";
-#endif
 				bias-disable; /* No PULL */
 				drive-strength = <2>; /* 2 MA */
 			};
@@ -3656,19 +3392,11 @@
 		cam_sensor_rear2_suspend: cam_sensor_rear2_suspend {
 			/* RESET, STANDBY */
 			mux {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio28","gpio27";
-#else
-				pins = "gpio9";
-#endif
 				function = "gpio";
 			};
 			config {
-#ifdef CONFIG_VENDOR_SMARTISAN
 				pins = "gpio28","gpio27";
-#else
-				pins = "gpio9";
-#endif
 				bias-pull-down; /* PULL DOWN */
 				drive-strength = <2>; /* 2 MA */
 				output-low;
@@ -3861,7 +3589,6 @@
 			};
 		};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 		atest_usb13_active: atest_usb13_active {
 			mux {
 				pins = "gpio85";
@@ -3887,62 +3614,10 @@
 				drive-strength = <2>;
 			};
 		};
-#endif
 	};
 };
 
 &pm8998_gpios {
-#ifndef CONFIG_VENDOR_SMARTISAN
-	key_home {
-		key_home_default: key_home_default {
-			pins = "gpio5";
-			function = "normal";
-			input-enable;
-			bias-pull-up;
-			power-source = <0>;
-		};
-	};
-
-	led_bt {
-		led_bt_default: led_bt_default {
-			pins = "gpio5";
-			function = "normal";
-			power-source = <0>;
-			output-low;
-		};
-	};
-
-	key_vol_up {
-		key_vol_up_default: key_vol_up_default {
-			pins = "gpio6";
-			function = "normal";
-			input-enable;
-			bias-pull-up;
-			power-source = <0>;
-		};
-	};
-
-	key_cam_snapshot {
-		key_cam_snapshot_default: key_cam_snapshot_default {
-			pins = "gpio7";
-			function = "normal";
-			input-enable;
-			bias-pull-up;
-			power-source = <0>;
-		};
-	};
-
-	key_cam_focus {
-		key_cam_focus_default: key_cam_focus_default {
-			pins = "gpio8";
-			function = "normal";
-			input-enable;
-			bias-pull-up;
-			power-source = <0>;
-		};
-	};
-#endif
-
 	led_wifi {
 		led_wifi_default: led_wifi_default {
 			pins = "gpio9";
@@ -3972,11 +3647,7 @@
 
 	camera_rear_dvdd_en {
 		camera_rear_dvdd_en_default: camera_rear_dvdd_en_default {
-#ifdef CONFIG_VENDOR_SMARTISAN
 			pins = "gpio7";
-#else
-			pins = "gpio12";
-#endif
 			function = "normal";
 			power-source = <0>;
 			output-low;
@@ -3992,7 +3663,6 @@
 		};
 	};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 	usb_dp_dvdd_en {
 		usb_dp_dvdd_en_default: usb_dp_dvdd_en_default {
 			pins = "gpio17";
@@ -4001,5 +3671,4 @@
 			output-low;
 		};
 	};
-#endif
 };

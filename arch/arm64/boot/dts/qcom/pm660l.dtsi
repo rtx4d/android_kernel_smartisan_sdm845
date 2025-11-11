@@ -182,7 +182,6 @@
 			};
 		};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 		pm660l_wled: qcom,leds@d800 {
 			compatible = "qcom,qpnp-wled";
 			reg = <0xd800 0x100>,
@@ -211,7 +210,6 @@
 			qcom,auto-calibration-enable;
 			status = "ok";
 		};
-#endif
 
 		flash_led: qcom,leds@d300 {
 			compatible = "qcom,qpnp-flash-led-v2";

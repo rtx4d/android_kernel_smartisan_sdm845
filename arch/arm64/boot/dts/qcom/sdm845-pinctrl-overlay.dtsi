@@ -62,7 +62,6 @@
 	};
 };
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 &tlmm {
 	pmx_ts_int_active {
 		ts_int_active: ts_int_active {
@@ -194,4 +193,3 @@
 		};
 	};
 };
-#endif

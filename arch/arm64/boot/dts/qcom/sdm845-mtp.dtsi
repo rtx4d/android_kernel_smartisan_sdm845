@@ -13,9 +13,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include "sdm845-pmic-overlay.dtsi"
 #include "sdm845-pinctrl-overlay.dtsi"
-#ifndef CONFIG_VENDOR_SMARTISAN
-#include "sdm845-camera-sensor-mtp.dtsi"
-#endif
 
 &qupv3_se10_i2c {
 #include "smb1355.dtsi"
@@ -44,50 +41,6 @@
 	};
 };
 
-#ifndef CONFIG_VENDOR_SMARTISAN
-&soc {
-	gpio_keys {
-		compatible = "gpio-keys";
-		label = "gpio-keys";
-
-		pinctrl-names = "default";
-		pinctrl-0 = <&key_vol_up_default
-			     &key_cam_snapshot_default
-			     &key_cam_focus_default>;
-
-		vol_up {
-			label = "volume_up";
-			gpios = <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
-			linux,input-type = <1>;
-			linux,code = <115>;
-			gpio-key,wakeup;
-			debounce-interval = <15>;
-			linux,can-disable;
-		};
-
-		cam_snapshot {
-			label = "cam_snapshot";
-			gpios = <&pm8998_gpios 7 GPIO_ACTIVE_LOW>;
-			linux,input-type = <1>;
-			linux,code = <766>;
-			gpio-key,wakeup;
-			debounce-interval = <15>;
-			linux,can-disable;
-		};
-
-		cam_focus {
-			label = "cam_focus";
-			gpios = <&pm8998_gpios 8 GPIO_ACTIVE_LOW>;
-			linux,input-type = <1>;
-			linux,code = <528>;
-			gpio-key,wakeup;
-			debounce-interval = <15>;
-			linux,can-disable;
-		};
-	};
-};
-#endif
-
 &labibb {
 	status = "ok";
 	qcom,qpnp-labibb-mode = "lcd";
@@ -103,7 +56,6 @@
 	qcom,platform-reset-gpio = <&tlmm 6 0>;
 };
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 &dsi_td4362_1080_cmd {
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -113,7 +65,6 @@
 	qcom,platform-reset-gpio = <&tlmm 6 0>;
 	qcom,platform-te-gpio = <&tlmm 10 0>;
 };
-#endif
 
 &dsi_dual_nt35597_truly_cmd {
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
@@ -204,25 +155,13 @@
 	qcom,platform-te-gpio = <&tlmm 10 0>;
 };
 
-#ifndef CONFIG_VENDOR_SMARTISAN
-&dsi_nt35597_truly_dsc_cmd_display {
-	qcom,dsi-display-active;
-};
-#endif
-
-#ifdef CONFIG_VENDOR_SMARTISAN
 &dsi_td4362_1080_cmd_display {
 	qcom,dsi-display-active;
 };
-#endif
 
 &pmi8998_wled {
 	status = "okay";
-#ifdef CONFIG_VENDOR_SMARTISAN
 	qcom,led-strings-list = [01 02 03];
-#else
-	qcom,led-strings-list = [01 02];
-#endif
 };
 
 &pmi8998_haptics {
@@ -261,7 +200,6 @@
 	status = "ok";
 };
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 &extcon_storage_cd {
 	gpio = <&tlmm 126 GPIO_ACTIVE_LOW>;
 	debounce-ms = <200>;
@@ -301,7 +239,6 @@
 
 	status = "ok";
 };
-#endif
 
 &sdhc_2 {
 	vdd-supply = <&pm8998_l21>;
@@ -345,14 +282,8 @@
 &vendor {
 	mtp_batterydata: qcom,battery-data {
 		qcom,batt-id-range-pct = <15>;
-#ifdef CONFIG_VENDOR_SMARTISAN
 		#include "fg-gen3-batterydata-trident-jiade-3600mah.dtsi"
 		#include "fg-gen3-batterydata-trident-atl-3600mah.dtsi"
-#else
-		#include "fg-gen3-batterydata-itech-3000mah.dtsi"
-		#include "fg-gen3-batterydata-ascent-3450mah.dtsi"
-		#include "fg-gen3-batterydata-demo-6000mah.dtsi"
-#endif
 	};
 
 	extcon_usb1: extcon_usb1 {
@@ -363,7 +294,6 @@
 		pinctrl-0 = <&usb2_vbus_det_default>;
 	};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 	usb1_vbus_vreg: usb1_vbus_vreg {
 		compatible = "regulator-fixed";
 		regulator-name = "usb_vbus_vreg";
@@ -376,7 +306,6 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&usb2_vbus_boost_default>;
 	};
-#endif
 };
 
 &pmi8998_fg {
@@ -422,7 +351,6 @@
 	};
 };
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 &qupv3_se14_i2c {
 	status = "ok";
 	ti@10 {
@@ -438,7 +366,6 @@
 		pinctrl-1 = <&uart_sel_sleep>;
 	};
 };
-#endif
 
 &qupv3_se10_i2c {
 	status = "ok";
@@ -450,9 +377,7 @@
 
 &usb1 {
 	extcon = <&extcon_usb1>;
-#ifdef CONFIG_VENDOR_SMARTISAN
 	vbus_dwc3-supply = <&usb1_vbus_vreg>;
-#endif
 };
 
 &ext_5v_boost {
@@ -654,9 +579,3 @@
 		};
 	};
 };
-
-#ifndef CONFIG_VENDOR_SMARTISAN
-&wil6210 {
-	status = "ok";
-};
-#endif

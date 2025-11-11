@@ -47,9 +47,7 @@
 		spi0 = &qupv3_se8_spi;
 		i2c0 = &qupv3_se10_i2c;
 		i2c1 = &qupv3_se3_i2c;
-#ifdef CONFIG_VENDOR_SMARTISAN
 		i2c14 = &qupv3_se14_i2c;
-#endif
 		hsuart0 = &qupv3_se6_4uart;
 	};
 
@@ -535,11 +533,7 @@
 
 		removed_region: removed_region@85fc0000 {
 			no-map;
-#ifdef CONFIG_VENDOR_SMARTISAN
 			reg = <0 0x85fc0000 0 0x4140000>;
-#else
-			reg = <0 0x85fc0000 0 0x2f40000>;
-#endif
 		};
 
 		qseecom_mem: qseecom_region@0x8ab00000 {
@@ -1446,11 +1440,7 @@
 		qcom,pm-qos-default-cpu = <0>;
 
 		pinctrl-names = "dev-reset-assert", "dev-reset-deassert";
-#ifdef CONFIG_VENDOR_SMARTISAN
 		pinctrl-0 = <&ufs_dev_reset_assert &hall_pin_active>;
-#else
-		pinctrl-0 = <&ufs_dev_reset_assert>;
-#endif
 		pinctrl-1 = <&ufs_dev_reset_deassert>;
 
 		resets = <&clock_gcc GCC_UFS_PHY_BCR>;
@@ -1459,7 +1449,6 @@
 		status = "disabled";
 	};
 
-#ifdef CONFIG_VENDOR_SMARTISAN
 	extcon_storage_cd: extcon_storage_cd {
 		compatible = "extcon-gpio";
 		extcon-id = <62>; /* EXTCON_MECHANICAL */
@@ -1558,7 +1547,6 @@
 
 		status = "disabled";
 	};
-#endif
 
 	sdhc_2: sdhci@8804000 {
 		compatible = "qcom,sdhci-msm-v5";
@@ -2607,19 +2595,12 @@
 		compatible = "qcom,qbt1000";
 		clock-names = "core", "iface";
 		clock-frequency = <25000000>;
-#ifndef CONFIG_VENDOR_SMARTISAN
-		qcom,ipc-gpio = <&tlmm 121 0>;
-#endif
 		qcom,finger-detect-gpio = <&pm8998_gpios 5 0>;
 	};
 
 	qcom_seecom: qseecom@86d00000 {
 		compatible = "qcom,qseecom";
-#ifdef CONFIG_VENDOR_SMARTISAN
 		reg = <0x86d00000 0x3400000>;
-#else
-		reg = <0x86d00000 0x2200000>;
-#endif
 		reg-names = "secapp-region";
 		qcom,hlos-num-ce-hw-instances = <1>;
 		qcom,hlos-ce-hw-instance = <0>;
@@ -4106,16 +4087,9 @@
 			"MSM_TSIF1_PHYS",
 			"MSM_TSPP_PHYS",
 			"MSM_TSPP_BAM_PHYS";
-#ifdef CONFIG_VENDOR_SMARTISAN
 		interrupts = <0 119 0>, /* TSIF0_IRQ */
 			<0 120 0>, /* TSIF1_IRQ */
 			<0 122 0>; /* TSIF_BAM_IRQ */
-#else
-		interrupts = <0 121 0>, /* TSIF_TSPP_IRQ */
-			<0 119 0>, /* TSIF0_IRQ */
-			<0 120 0>, /* TSIF1_IRQ */
-			<0 122 0>; /* TSIF_BAM_IRQ */
-#endif
 		interrupt-names = "TSIF_TSPP_IRQ",
 			"TSIF0_IRQ",
 			"TSIF1_IRQ",

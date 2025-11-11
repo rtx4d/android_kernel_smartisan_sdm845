@@ -214,12 +214,6 @@
 	qcom,dsi-display-active;
 };
 
-#ifndef CONFIG_VENDOR_SMARTISAN
-&wil6210 {
-	status = "ok";
-};
-#endif
-
 &ext_5v_boost {
 	status = "ok";
 };
