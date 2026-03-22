@@ -4613,8 +4613,8 @@ static void smblib_handle_typec_cc_state_change(struct smb_charger *chg)
 		chg->typec_present = false;
 		smblib_dbg(chg, PR_MISC, "TypeC removal\n");
 		smblib_handle_typec_removal(chg);
-	panic("We will get logs, one way or another");
-	return;
+	/*panic("We will get logs, one way or another");
+	return;*/
 	}
 
 	/* suspend usb if sink */

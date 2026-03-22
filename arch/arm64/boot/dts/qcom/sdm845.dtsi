@@ -661,14 +661,14 @@
 			linux,cma-default;
 		};
 
-		ramoops@ac000000 {
+		/*ramoops@ac000000 {
 			compatible = "ramoops";
 			reg = <0 0xAC000000 0 0x00200000>;
-			console-size = <0x80000>;
-			pmsg-size    = <0x40000>;
-			record-size  = <0x08000>;
+			console-size = <0xD0000>;
+			pmsg-size    = <0xD0000>;
+			record-size  = <0x20000>;
 			ftrace-size  = <0x20000>;
-		};
+		};*/
 	};
 };
 
@@ -1990,6 +1990,7 @@
 			qcom,secure-context-bank;
 			iommus = <&apps_smmu 0x140A 0x30>;
 			dma-coherent;
+			status = "disabled";
 		};
 		qcom,msm_fastrpc_compute_cb11 {
 			compatible = "qcom,msm-fastrpc-compute-cb";
