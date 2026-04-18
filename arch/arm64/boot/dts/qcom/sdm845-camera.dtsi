@@ -46,9 +46,10 @@
 			"csi0phytimer_clk_src",
 			"csi0phytimer_clk";
 		src-clock-name = "csi0phytimer_clk_src";
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		clock-rates =
 			<0 0 0 0 320000000 0 269333333 0>,
+			<0 0 0 0 384000000 0 269333333 0>,
 			<0 0 0 0 384000000 0 269333333 0>;
 		status = "ok";
 	};
@@ -82,9 +83,10 @@
 			"csi1phytimer_clk_src",
 			"csi1phytimer_clk";
 		src-clock-name = "csi1phytimer_clk_src";
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		clock-rates =
 			<0 0 0 0 320000000 0 269333333 0>,
+			<0 0 0 0 384000000 0 269333333 0>,
 			<0 0 0 0 384000000 0 269333333 0>;
 
 		status = "ok";
@@ -119,9 +121,10 @@
 			"csi2phytimer_clk_src",
 			"csi2phytimer_clk";
 		src-clock-name = "csi2phytimer_clk_src";
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		clock-rates =
 			<0 0 0 0 320000000 0 269333333 0>,
+			<0 0 0 0 384000000 0 269333333 0>,
 			<0 0 0 0 384000000 0 269333333 0>;
 		status = "ok";
 	};
@@ -621,8 +624,9 @@
 			<&clock_camcc CAM_CC_IFE_0_AXI_CLK>;
 		clock-rates =
 			<0 0 0 0 0 0 384000000 0 0 0 404000000 0 0>,
+			<0 0 0 0 0 0 538000000 0 0 0 480000000 0 0>,
 			<0 0 0 0 0 0 538000000 0 0 0 600000000 0 0>;
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		src-clock-name = "ife_csid_clk_src";
 		clock-control-debugfs = "true";
 		status = "ok";
@@ -709,8 +713,9 @@
 			<&clock_camcc CAM_CC_IFE_1_AXI_CLK>;
 		clock-rates =
 			<0 0 0 0 0 0 384000000 0 0 0 404000000 0 0>,
+			<0 0 0 0 0 0 538000000 0 0 0 480000000 0 0>,
 			<0 0 0 0 0 0 538000000 0 0 0 600000000 0 0>;
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		src-clock-name = "ife_csid_clk_src";
 		clock-control-debugfs = "true";
 		status = "ok";
@@ -794,8 +799,9 @@
 			<&clock_camcc CAM_CC_CAMNOC_AXI_CLK>;
 		clock-rates =
 			<0 0 0 0 0 0 384000000 0 0 0 404000000 0>,
+			<0 0 0 0 0 0 538000000 0 0 0 480000000 0>,
 			<0 0 0 0 0 0 538000000 0 0 0 600000000 0>;
-		clock-cntl-level = "svs", "turbo";
+		clock-cntl-level = "svs", "svs_l1", "turbo";
 		src-clock-name = "ife_csid_clk_src";
 		clock-control-debugfs = "true";
 		status = "ok";
